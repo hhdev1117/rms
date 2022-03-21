@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.3.xsd
+		http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+
+	<!-- Root Context: defines shared resources visible to all other web components -->
+	<!-- 데이터베이스 연결 -->
+	<bean id="dataSourceSpied"
+		class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@203.233.63.202:1527:DKQ" />
+		<property name="username" value="fed" />
+		<property name="password" value="sdman" />
+		<property name="maxWait" value="1000"></property>
+		<property name="maxActive" value="50"></property>
+		<property name="minIdle" value="25"></property>
+
+		<!-- DB 커넥션 강제 종료 오류 수정용 (로그인시 undefined 현상) -->
+		<property name="validationQuery" value="SELECT 1 FROM DUAL" />
+		<property name="testWhileIdle" value="true" />
+		<property name="timeBetweenEvictionRunsMillis"
+			value="7200000" />
+	</bean>
+
+	<bean id="dataSource"
+		class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
+		<constructor-arg ref="dataSourceSpied" />
+		<property name="logFormatter">
+			<bean class="net.sf.log4jdbc.tools.Log4JdbcCustomFormatter">
+				<property name="loggingType" value="MULTI_LINE" />
+				<property name="sqlPrefix"
+					value="&#10;&#10;&#10;SQL : &#10;&#10;" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- MessageSource을 이용해 변동 프로퍼티 설정 -->
+	<bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+
+		<!-- Encoding 설정 -->
+		<property name="defaultEncoding" value="UTF-8" />
+		<!-- Reload Cache 설정 -->
+		<property name="cacheSeconds" value="5" />
+		<!-- basenames 설정: 아래처럼 하면 WEB-INF 밑의 message 폴더 아래의 labels로 시작하는 모든 Property -->
+		<property name="basenames">
+			<list>
+				<value>/WEB-INF/property/globals</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- MessageSource를 사용하기 위한 Accessor 설정 -->
+	<bean id="messageSourceAccessor"
+		class="org.springframework.context.support.MessageSourceAccessor">
+		<constructor-arg ref="messageSource" />
+	</bean>
+
+	<!-- SqlSession -->
+	<bean id="sqlSessionFactory"
+		class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<!-- MyBatis 설정 파일의 위치를 지정합니다. -->
+		<property name="configLocation"
+			value="classpath:/mybatis-config.xml" />
+
+		<!-- SQL 파일의 위치를 지정합니다. -->
+		<property name="mapperLocations"
+			value="classpath*:/sqlmap/*.xml" />
+	</bean>
+
+	<!-- SqlSession -->
+	<bean id="sqlSession"
+		class="org.mybatis.spring.SqlSessionTemplate"
+		destroy-method="clearCache">
+		<constructor-arg name="sqlSessionFactory"
+			ref="sqlSessionFactory" />
+	</bean>
+
+	<!-- 지정된 베이스 패키지에서 DAO(Mapper) 를 검색하여 등록합니다. -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.daekyo.rms.*" />
+	</bean>
+
+	<!-- 아노테이션 기반의 트랜잭션을 사용합니다. -->
+	<tx:annotation-driven
+		transaction-manager="transactionManager" />
+
+	<!-- 트랜잭션 매니저 bean 을 등록합니다. -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<tx:advice id="txAdvice"
+		transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="*" rollback-for="Exception" />
+		</tx:attributes>
+	</tx:advice>
+
+	<aop:config>
+		<aop:pointcut id="requiredTx"
+			expression="execution(* com.daekyo.rms.*.service.*ServiceImpl.*(..))" />
+		<aop:advisor advice-ref="txAdvice"
+			pointcut-ref="requiredTx" />
+	</aop:config>
+
+</beans>

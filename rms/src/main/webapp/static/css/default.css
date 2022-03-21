@@ -1,0 +1,182 @@
+@charset "utf-8";
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap');
+
+
+* {
+  box-sizing:border-box;
+}
+
+html{
+  width:100%;
+  height:100%;
+}
+
+body {
+  width:100%;
+  height:100%;
+  color:#1d1d1e;
+  background-color:#f0f1f3;
+  font-family:"Noto Sans KR", sans-serif;
+  font-size:12px;
+  font-weight:400;
+  line-height:1;
+  letter-spacing:0;
+  -webkit-font-smoothing:antialiased;
+  margin:0;
+  top:0;
+  bottom:0;
+  left:0;
+  right:0;
+}
+
+a {color:#1d1d1e;}
+a:focus, a:hover {color:#1d1d1e; text-decoration:none}
+ol, ul {list-style:none; padding-left:0}
+button {border:0; background:transparent;}
+label {font-weight:400}
+::-ms-clear {display:none;}
+.h1, .h2, .h3, .h4, .h5, .h6, 
+h1, h2, h3, h4, h5, h6 {font-weight:600;/* text-transform:capitalize*/}
+.h3, h3 {font-size:26px;}
+h4 small {color:#1d1d1e;font-size:65%; text-transform:none;}
+.fa, .fab, .fal, .far, .fas {color:#797979;}
+
+article, aside, canvas, details, figcaption, figure,
+footer, header, main, hgroup, menu, nav, section, summary {display:block;}
+
+blockquote, q {quotes:none;}
+blockquote:before, blockquote:after,
+q:before, q:after {content:none;}
+
+table {
+	empty-cells:show;
+	/*border-collapse:collapse;*/
+	border-spacing:0;
+}
+table td {}
+ol, ul, li {list-style:none;}
+
+img, fieldset, iframe {border:0 none;}
+
+input, button, img, label, textarea {
+	vertical-align:middle; 
+	border-radius:0;
+	appearance:none;
+	-webkit-appearance:none;
+	-moz-appearance:none;
+}
+input::-ms-clear {
+	display:none;
+}
+button {
+	padding:0;
+	border:none;
+	background:none;
+	border-radius:0;
+	outline:none;
+	cursor:pointer;
+	font-style:normal; font-weight:300;
+}
+
+input[type=text],
+input[type=tel],
+input[type=date],
+input[type=number],
+input[type=password] {
+	-webkit-appearance:none;
+	border:none;
+	border-radius:2px;
+  font-family:"Noto Sans KR", sans-serif;
+  font-size:12px;
+  font-weight:normal;
+	outline:none;
+	font-style:normal; font-weight:300;
+}
+input[type=date]::-webkit-inner-spin-button,
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {-webkit-appearance:none;}
+::-webkit-input-placeholder {color:#5e5e5e;} /* WebKit browsers */
+:-moz-placeholder {color:#5e5e5e; opacity:1;} /* Mozilla Firefox 4 to 18 */
+::-moz-placeholder {color:#5e5e5e; opacity:1;} /* Mozilla Firefox 19+ */
+:-ms-input-placeholder {color:#5e5e5e;} /* Internet Explorer 10+ */
+
+input[type=text]:focus,
+input[type=tel]:focus,
+input[type=date]:focus,
+input[type=number]:focus,
+input[type=password]:focus {border-color:none;}
+
+select{
+	display: inline-block; 
+	width: 100%;
+  border:none;
+	box-sizing: border-box; 
+	border-radius:none; 
+	-webkit-border-radius:0; 
+	appearance:none; 
+	-webkit-appearance:none;
+}
+select::-ms-expand{
+	display: none;
+  border:none;
+}
+
+
+textarea {border-radius:0; resize:none;font-family:"Noto Sans KR", sans-serif;font-size:13px;font-weight:normal;}
+
+i, em, address {font-style:normal;}
+
+a {
+	color:#333;
+	text-decoration:none;
+	outline:none;
+}
+a:link,
+a:visited {color:#333; text-decoration:none;}
+a:hover {text-decoration:none !important;}
+
+a[href^=tel] {color:inherit; text-decoration:none;} /* i phon number color reset */
+
+img, video {max-width:100%;}
+
+/* text */
+.bold {font-weight:bold;}
+.red {color:#ed1c24;}
+.green {color:#5bac3b;}
+.blue {color:#3a74f8}
+
+/* 체크박스 */
+.chk {display:block;position:relative;padding-left:22px;cursor: pointer;font-size:13px;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}
+.chk input {position:absolute;opacity:0;cursor:pointer;height:0;width:0;}
+.checkmark {position:absolute;left: 0;height: 16px;width: 16px;border-radius:2px;border:1px solid #d6dcec;}
+.chk:hover input ~ .checkmark {background-color:#fff;}
+.chk input:checked ~ .checkmark {background-color:#7587a8;border:1px solid #7587a8;}
+.chk input:disabled ~ .checkmark {background-color:#f6f7f7;border:1px solid #f1f1f1;}
+.checkmark:after {content: "";position:absolute;display:none;}
+.chk input:checked ~ .checkmark:after {display: block;}
+.chk .checkmark:after {left:4px;top:0;width:4px;height:8px;border:solid white;border-width:0 2px 2px 0;-webkit-transform:rotate(45deg);-ms-transform:rotate(45deg);transform:rotate(45deg);}
+
+
+/* select style */
+.custom-select {display:inline-block;margin:0 0 6px 6px;}
+.custom-select select {background:url('../images/main/icon_arrow.png') no-repeat right 50% #f7f8fa;font-size:14px;padding:6px 20px 8px 8px;border-radius:2px;border:1px solid #ced2da;}
+
+/* checkbox */
+.checkbox{display:inline-block;position:relative;}
+.checkbox input[type="checkbox"]{overflow:hidden;position:absolute;width:1px;height:1px;padding:0;margin:-1px;clip:rect(0,0,0,0);border:0}
+.checkbox input[type="checkbox"] + label{display:inline-block;position:relative;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;font-size:15px;color:#b4b4b4;}
+.checkbox input[type="checkbox"] + label:before{content:'';display:inline-block;width:20px;height:20px;line-height:20px;margin-right:8px;text-align:center;vertical-align:middle;background:#bfbfbf url("../images/icon_check.png") no-repeat;background-size:20px}
+.checkbox input[type="checkbox"]:checked + label:before{background:#bfbfbf url("../images/icon_check.png") 0 -20px no-repeat;background-size:20px}
+
+.tblchbx {display:inline-block;position:relative;padding:0 2px;}
+.tblchbx input[type="checkbox"] {overflow:hidden;position:absolute;width:1px;height:1px;padding:0;margin:-1px;clip:rect(0,0,0,0);border:0}
+.tblchbx input[type="checkbox"] + label{display:inline-block;position:relative;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;/*font-size:15px;*/color:#464646;}
+.tblchbx input[type="checkbox"] + label:before{content:'';display:inline-block;width:15px;height:15px;line-height:15px;margin:3px 8px 5px 0;text-align:center;vertical-align:middle;background:#fff url("../images/icon_check.png") no-repeat;background-size:15px}
+.tblchbx input[type="checkbox"]:checked + label:before{background:#fff url("../images/icon_check.png") 0 -15px no-repeat;background-size:15px}
+
+/* radio btn */
+.rdo {display:inline-block;position:relative;padding:0 6px;}
+.rdo input[type="radio"] {overflow:hidden;position:absolute;width:1px;height:1px;padding:0;margin:-1px;clip:rect(0,0,0,0);border:0}
+.rdo input[type="radio"] + label{display:inline-block;position:relative;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;font-size:13px;color:#464646;}
+.rdo input[type="radio"] + label:before{content:'';display:inline-block;width:16px;height:16px;line-height:16px;margin:0 6px;margin-bottom:3px;text-align:center;vertical-align:middle;background:transparent url("../images/icon_radio.png") no-repeat;background-size:16px}
+.rdo input[type="radio"]:checked + label:before{background:transparent url("../images/icon_radio.png") 0 -16px no-repeat;background-size:16px}

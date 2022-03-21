@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.daekyo.rms.com.dao.ComCommDAO"> 
+	<select id="menuAuthCheck" parameterType="HashMap" resultType="Integer" > 
+		SELECT COUNT(1)
+		FROM ZSD7_RMS_MENU
+		WHERE MANDT = '300'
+		AND ZUSE_YN = 'Y'
+		AND ZAUTH_GB = #{zauth_grp}
+		AND ZMENU_URL = #{zmenu_url}
+		<if test='zregion_gb != "A"'>
+			AND ZREGION_GB IN (#{zregion_gb}, 'U')
+		</if>
+	</select>
+	
+	<!-- 메뉴 조회 -->	
+	<resultMap type="menuVO" id="menuMap">
+		<id column="zmenu_nm" 			property="zmenu_nm" />
+		<id column="zmenu_url" 			property="zmenu_url" />
+	</resultMap>
+	
+	<select id="getMenu" parameterType="HashMap" resultMap="menuMap" > 
+		SELECT ZMENU_NM
+		     , ZMENU_URL
+		FROM ZSD7_RMS_MENU
+		WHERE MANDT = '300'
+		AND ZAUTH_GB = #{zauth_grp}
+		AND ZREGION_GB = #{active_bcg_id}
+		AND ZORDER != ' '
+		ORDER BY TO_NUMBER(ZORDER)
+	</select>
+	
+</mapper>

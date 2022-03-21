@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.daekyo.rms.mon.dao.MonMainDAO"> 
+
+	<resultMap type="monMainVO" id="monMain1">
+		<id column="zrms_ym" 			property="zrms_ym" />
+		<id column="zitem1_p" 			property="zitem1_p" />
+		<id column="zitem2_p" 			property="zitem2_p" />
+		<id column="zitem3_p" 			property="zitem3_p" />
+		<id column="zitem4_p" 			property="zitem4_p" />
+		<id column="zitem5_p" 			property="zitem5_p" />
+		<id column="zitem6_p" 			property="zitem6_p" />
+		<id column="zitem7_p" 			property="zitem7_p" />
+		<id column="zadmin_rank" 		property="zadmin_rank" />
+		<id column="zup_rank" 			property="zup_rank" />
+	</resultMap>
+	
+	<select id="getMonMoni" parameterType="HashMap" resultMap="monMain1" >
+	    WITH RMS_TOTAL AS
+        (
+                SELECT A.*
+                     , ZADMIN_RANK
+                     , ZUP_RANK
+                FROM ZSD7_RMS_TOTAL A
+                   , ZSD7_RMS_ADMIN_R B
+                WHERE A.MANDT = '300'
+                AND A.ZRMS_YM BETWEEN #{zreq_ym_b} AND #{zreq_ym_a}
+                AND A.ZLEVEL = #{zlevel}
+                AND A.MANDT = B.MANDT(+)
+                AND A.ZRMS_YM = B.ZRMS_YM(+)
+                AND A.ZLEVEL = B.ZLEVEL(+)
+                AND A.ZREGION = B.ZREGION(+)
+                AND A.ZDEPT_ID = B.ZDEPT_ID(+)
+                AND A.ZDEPT_BRCH_ID = B.ZDEPT_BRCH_ID(+)
+				<if test='zlevel == "1"'>
+					AND A.ZREGION = #{zregion}
+				</if>
+				<if test='zlevel == "2"'>
+					AND A.ZREGION = #{zregion}
+					AND A.ZDEPT_ID = #{zdept_id}
+				</if>
+				<if test='zlevel == "3"'>
+					AND A.ZREGION = #{zregion}
+					AND A.ZDEPT_ID = #{zdept_id}
+					AND A.ZDEPT_BRCH_ID = #{zdept_brch_id}
+				</if>
+				<if test='zlevel == "4"'>
+					AND A.ZREGION = #{zregion}
+					AND A.ZDEPT_ID = #{zdept_id}
+					AND A.ZDEPT_BRCH_ID = #{zdept_brch_id}
+					AND A.ZEMP_ID = #{zemp_id}
+				</if>
+        )
+        SELECT '평균' ZRMS_YM
+    	    , RTRIM(TO_CHAR(ROUND(
+                      CASE 
+                          WHEN SUM(ZITEM1_S) = 0 OR SUM(ZITEM1_T) = 0
+                          THEN 0
+                          ELSE SUM(ZITEM1_S)/SUM(ZITEM1_T)*100
+                      END   
+                  , 2), 'FM9990.00'), '.') AS ZITEM1_P
+    	    , RTRIM(TO_CHAR(ROUND(
+                      CASE 
+                          WHEN SUM(ZITEM2_S) = 0 OR SUM(ZITEM2_T) = 0
+                          THEN 0
+                          ELSE SUM(ZITEM2_S)/SUM(ZITEM2_T)*100
+                      END   
+                  , 2), 'FM9990.00'), '.') AS ZITEM2_P
+    	    , RTRIM(TO_CHAR(ROUND(
+                      CASE 
+                          WHEN SUM(ZITEM3_S) = 0 OR SUM(ZITEM3_T) = 0
+                          THEN 0
+                          ELSE SUM(ZITEM3_S)/SUM(ZITEM3_T)*100
+                      END   
+                  , 2), 'FM9990.00'), '.') AS ZITEM3_P
+    	    , RTRIM(TO_CHAR(ROUND(
+                      CASE 
+                          WHEN SUM(ZITEM4_S) = 0 OR SUM(ZITEM4_T) = 0
+                          THEN 0
+                          ELSE SUM(ZITEM4_S)/SUM(ZITEM4_T)*100
+                      END   
+                  , 2), 'FM9990.00'), '.') AS ZITEM4_P
+    	    , RTRIM(TO_CHAR(ROUND(
+                      CASE 
+                          WHEN SUM(ZITEM5_S) = 0 OR SUM(ZITEM5_T) = 0
+                          THEN 0
+                          ELSE SUM(ZITEM5_S)/SUM(ZITEM5_T)*100
+                      END   
+                  , 2), 'FM9990.00'), '.') AS ZITEM5_P
+    	    , RTRIM(TO_CHAR(ROUND(
+                      CASE 
+                          WHEN SUM(ZITEM6_S) = 0 OR SUM(ZITEM6_T) = 0
+                          THEN 0
+                          ELSE SUM(ZITEM6_S)/SUM(ZITEM6_T)*100
+                      END   
+                  , 2), 'FM9990.00'), '.') AS ZITEM6_P
+    	    , RTRIM(TO_CHAR(ROUND(
+                      CASE 
+                          WHEN SUM(ZITEM7_S) = 0 OR SUM(ZITEM7_T) = 0
+                          THEN 0
+                          ELSE SUM(ZITEM7_S)/SUM(ZITEM7_T)*100
+                      END   
+                  , 2), 'FM9990.00'), '.') AS ZITEM7_P
+            , ' ' AS ZADMIN_RANK
+            , ' ' AS ZUP_RANK
+          FROM RMS_TOTAL
+    
+          UNION ALL
+    
+          SELECT ZRMS_YM
+               , RTRIM(TO_CHAR(ROUND(ZITEM1_P, 2), 'FM9990.00'), '.') AS ZITEM1_P
+               , RTRIM(TO_CHAR(ROUND(ZITEM2_P, 2), 'FM9990.00'), '.') AS ZITEM2_P
+               , RTRIM(TO_CHAR(ROUND(ZITEM3_P, 2), 'FM9990.00'), '.') AS ZITEM3_P
+               , RTRIM(TO_CHAR(ROUND(ZITEM4_P, 2), 'FM9990.00'), '.') AS ZITEM4_P
+               , RTRIM(TO_CHAR(ROUND(ZITEM5_P, 2), 'FM9990.00'), '.') AS ZITEM5_P
+               , RTRIM(TO_CHAR(ROUND(ZITEM6_P, 2), 'FM9990.00'), '.') AS ZITEM6_P
+               , RTRIM(TO_CHAR(ROUND(ZITEM7_P, 2), 'FM9990.00'), '.') AS ZITEM7_P
+               , NVL(TO_CHAR(ZADMIN_RANK), '-') AS ZADMIN_RANK
+               , NVL(TO_CHAR(ZUP_RANK), '-') AS ZUP_RANK
+          FROM RMS_TOTAL
+          ORDER BY ZRMS_YM DESC
+	</select>
+	
+	<select id="getMonMoniForCnt" parameterType="HashMap" resultMap="monMain1" >
+	    WITH RMS_TOTAL AS
+        (
+                SELECT A.*
+                     , ZADMIN_RANK
+                     , ZUP_RANK
+                FROM ZSD7_RMS_TOTAL A
+                   , ZSD7_RMS_ADMIN_R B
+                WHERE A.MANDT = '300'
+                AND A.ZRMS_YM BETWEEN #{zreq_ym_b} AND #{zreq_ym_a}
+                AND A.ZLEVEL = #{zlevel}
+                AND A.MANDT = B.MANDT(+)
+                AND A.ZRMS_YM = B.ZRMS_YM(+)
+                AND A.ZLEVEL = B.ZLEVEL(+)
+                AND A.ZREGION = B.ZREGION(+)
+                AND A.ZDEPT_ID = B.ZDEPT_ID(+)
+                AND A.ZDEPT_BRCH_ID = B.ZDEPT_BRCH_ID(+)
+				<if test='zlevel == "1"'>
+					AND A.ZREGION = #{zregion}
+				</if>
+				<if test='zlevel == "2"'>
+					AND A.ZREGION = #{zregion}
+					AND A.ZDEPT_ID = #{zdept_id}
+				</if>
+				<if test='zlevel == "3"'>
+					AND A.ZREGION = #{zregion}
+					AND A.ZDEPT_ID = #{zdept_id}
+					AND A.ZDEPT_BRCH_ID = #{zdept_brch_id}
+				</if>
+				<if test='zlevel == "4"'>
+					AND A.ZREGION = #{zregion}
+					AND A.ZDEPT_ID = #{zdept_id}
+					AND A.ZDEPT_BRCH_ID = #{zdept_brch_id}
+					AND A.ZEMP_ID = #{zemp_id}
+				</if>
+        )
+          SELECT ZRMS_YM
+               , ZITEM1_S AS ZITEM1_P
+               , ZITEM2_S AS ZITEM2_P
+               , ZITEM3_S AS ZITEM3_P
+               , ZITEM4_S AS ZITEM4_P
+               , ZITEM5_S AS ZITEM5_P
+               , ZITEM6_S AS ZITEM6_P
+               , ZITEM7_S AS ZITEM7_P
+               , NVL(TO_CHAR(ZADMIN_RANK), '-') AS ZADMIN_RANK
+               , NVL(TO_CHAR(ZUP_RANK), '-') AS ZUP_RANK
+          FROM RMS_TOTAL
+          ORDER BY ZRMS_YM DESC
+	</select>
+	
+</mapper>

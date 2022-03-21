@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration> 
+
+	<!-- 여러가지 기본 옵션을 지정합니다. -->
+	<settings> 
+		<!-- 오라클 필드 속성이 READ_COUNT 처럼 언더 스코어가 있을 때 VO 의 readCount 처럼 카멜 케이스로 변환 되게 합니다. -->
+		<setting name="mapUnderscoreToCamelCase" value="true" />
+		<setting name="defaultStatementTimeout" value="120" />
+	</settings>
+	
+	
+	<typeAliases>
+		<!-- com -->
+		<typeAlias alias="codeVO"  type="com.daekyo.rms.com.vo.CodeVO" />
+		<typeAlias alias="loginVO"  type="com.daekyo.rms.com.vo.LoginVO" />
+		<typeAlias alias="mainVO"  type="com.daekyo.rms.com.vo.MainVO" />
+		<typeAlias alias="menuVO"  type="com.daekyo.rms.com.vo.MenuVO" />
+		
+		<!-- sum -->
+		<typeAlias alias="sumMainVO"  type="com.daekyo.rms.sum.vo.SumMainVO" />
+		
+		<!-- mon -->
+		<typeAlias alias="monMainVO"  type="com.daekyo.rms.mon.vo.MonMainVO" />
+		
+		<!-- crd -->
+		<typeAlias alias="crdMainVO"  type="com.daekyo.rms.crd.vo.CrdMainVO" />
+		
+		<!-- pay -->
+		<typeAlias alias="payMainVO"  type="com.daekyo.rms.pay.vo.PayMainVO" />
+		
+		<!-- ind -->
+		<typeAlias alias="indMainVO"  type="com.daekyo.rms.ind.vo.IndMainVO" />
+		
+		<!-- arr -->
+		<typeAlias alias="arrMainVO"  type="com.daekyo.rms.arr.vo.ArrMainVO" />
+		
+		<!-- trn -->
+		<typeAlias alias="trnMainVO"  type="com.daekyo.rms.trn.vo.TrnMainVO" />
+		
+		<!-- smi -->
+		<typeAlias alias="smiMainVO"  type="com.daekyo.rms.smi.vo.SmiMainVO" />
+		
+		<!-- stm -->
+		<typeAlias alias="stmMainVO"  type="com.daekyo.rms.stm.vo.StmMainVO" />
+		
+		<!-- nst -->
+		<typeAlias alias="nstMainVO"  type="com.daekyo.rms.nst.vo.NstMainVO" />
+		
+		<!-- trs -->
+		<typeAlias alias="trsMainVO"  type="com.daekyo.rms.trs.vo.TrsMainVO" />
+		
+		<!-- exl -->
+		<typeAlias alias="exlCardPaymentVO"  type="com.daekyo.rms.exl.vo.ExlCardPaymentVO" />
+		<typeAlias alias="exlTranStudyVO"  type="com.daekyo.rms.exl.vo.ExlTranStudyVO" />
+		<typeAlias alias="exlIndAuthVO"  type="com.daekyo.rms.exl.vo.ExlIndAuthVO" />
+		<typeAlias alias="exlArrPaymentVO"  type="com.daekyo.rms.exl.vo.ExlArrPaymentVO" />
+		<typeAlias alias="exlPayDirectVO"  type="com.daekyo.rms.exl.vo.ExlPayDirectVO" />
+		<typeAlias alias="exlMoniSumVO"  type="com.daekyo.rms.exl.vo.ExlMoniSumVO" />
+		<typeAlias alias="exlStmApplyVO"  type="com.daekyo.rms.exl.vo.ExlStmApplyVO" />
+		<typeAlias alias="exlSmiRiskVO"  type="com.daekyo.rms.exl.vo.ExlSmiRiskVO" />
+		<typeAlias alias="exlMonMoniVO"  type="com.daekyo.rms.exl.vo.ExlMonMoniVO" />
+		<typeAlias alias="exlNstZeroStudyVO"  type="com.daekyo.rms.exl.vo.ExcelNstZeroStudyVO" />
+		<typeAlias alias="exlTrsDupVO"  type="com.daekyo.rms.exl.vo.ExlTrsDupVO" />
+	</typeAliases>
+	
+	
+</configuration>
+

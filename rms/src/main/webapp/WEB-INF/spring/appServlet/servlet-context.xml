@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
+	<!-- Enables the Spring MVC @Controller programming model -->
+	<annotation-driven />
+
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
+	<resources mapping="/static/**" location="/static/" />
+	
+	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/web directory -->
+	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<beans:property name="prefix" value="/WEB-INF/views/" />
+		<beans:property name="suffix" value=".jsp" />
+		<beans:property name="order" value="2" />
+	</beans:bean>
+	
+	<!-- 인터셉터 객체 생성 -->
+	<beans:bean id="AuthLoginInterceptor" class="com.daekyo.rms.util.AuthLoginInterceptor"></beans:bean>
+	
+	<!-- 메뉴권한 인터셉터 객체 생성 -->
+	<beans:bean id="MenuControllInterceptor" class="com.daekyo.rms.util.MenuControllInterceptor"></beans:bean>
+	<!-- Interceptor 설정 -->
+	<interceptors>
+	    <interceptor>
+	    	<mapping path="/**" />
+	    	<exclude-mapping path="/"/>
+	    	<exclude-mapping path="/static/**"/>
+	    	<exclude-mapping path="/com/checkLogin.do"/>
+	    	<exclude-mapping path="/login_link"/>
+	    	<exclude-mapping path="/com/login_link_check.do"/>
+	    	<exclude-mapping path="/logout"/>
+	    	<beans:bean class = "com.daekyo.rms.util.AuthLoginInterceptor" />	        
+	    </interceptor>
+	    
+	    <interceptor>
+	    	<mapping path="/**" />
+	    	<exclude-mapping path="/"/>
+	    	<exclude-mapping path="/static/**"/>
+	    	<exclude-mapping path="/com/checkLogin.do"/>
+	    	<exclude-mapping path="/login_link"/>
+	    	<exclude-mapping path="/com/login_link_check.do"/>
+	    	<exclude-mapping path="/logout"/>
+	    	<beans:bean class = "com.daekyo.rms.util.MenuControllInterceptor" />	        
+	    </interceptor>
+	</interceptors>
+
+	<context:component-scan base-package="com.daekyo.rms" />
+	
+</beans:beans>

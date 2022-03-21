@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.daekyo.rms.com.dao.ComMainDAO"> 
+
+	<resultMap type="mainVO" id="mainMap">
+		<id column="zitem1_p" 		property="zitem1_p" />
+		<id column="zitem2_p" 		property="zitem2_p" />
+		<id column="zitem3_p" 		property="zitem3_p" />
+		<id column="zitem4_p" 		property="zitem4_p" />
+		<id column="zitem5_p" 		property="zitem5_p" />
+		<id column="zitem6_p" 		property="zitem6_p" />
+		<id column="zitem7_p" 		property="zitem7_p" />
+		<id column="nowdate" 		property="nowdate" />
+		<id column="rank1" 			property="rank1" />
+		<id column="rank2" 			property="rank2" />
+	</resultMap>
+	
+	<select id="selectMain" parameterType="HashMap" resultMap="mainMap" > 
+		SELECT RTRIM(TO_CHAR(NVL(DECODE(ZITEM1_T, 0, 0, ROUND(ZITEM1_S/ZITEM1_T*100, 2)), '0'), 'FM9990.00'), '.') AS ZITEM1_P
+		      , RTRIM(TO_CHAR(NVL(DECODE(ZITEM2_T, 0, 0, ROUND(ZITEM2_S/ZITEM2_T*100, 2)), '0'), 'FM9990.00'), '.') AS ZITEM2_P
+		      , RTRIM(TO_CHAR(NVL(DECODE(ZITEM3_T, 0, 0, ROUND(ZITEM3_S/ZITEM3_T*100, 2)), '0'), 'FM9990.00'), '.') AS ZITEM3_P
+		      , RTRIM(TO_CHAR(NVL(DECODE(ZITEM4_T, 0, 0, ROUND(ZITEM4_S/ZITEM4_T*100, 2)), '0'), 'FM9990.00'), '.') AS ZITEM4_P
+		      , RTRIM(TO_CHAR(NVL(DECODE(ZITEM5_T, 0, 0, ROUND(ZITEM5_S/ZITEM5_T*100, 2)), '0'), 'FM9990.00'), '.') AS ZITEM5_P
+		      , RTRIM(TO_CHAR(NVL(DECODE(ZITEM6_T, 0, 0, ROUND(ZITEM6_S/ZITEM6_T*100, 2)), '0'), 'FM9990.00'), '.') AS ZITEM6_P
+		      , RTRIM(TO_CHAR(NVL(DECODE(ZITEM7_T, 0, 0, ROUND(ZITEM7_S/ZITEM7_T*100, 2)), '0'), 'FM9990.00'), '.') AS ZITEM7_P
+		      , TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'YYYY-MM') AS NOWDATE
+			    <choose>
+				  	<when test='session_zregion_gb != "A"'>
+				  		<choose>
+						  	<when test="session_zauth_grp == 'NX' or session_zauth_grp == 'NI'">
+						  		,NVL(TO_CHAR((SELECT ZADMIN_RANK FROM ZSD7_RMS_ADMIN_R WHERE MANDT = '300' AND ZRMS_YM = TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'YYYYMM') AND ZLEVEL = '1' AND ZREGION = #{session_zregion})), ' ') AS RANK1
+							</when>
+							<when test="session_zauth_grp == 'NC'">
+						  		,NVL(TO_CHAR((SELECT ZADMIN_RANK FROM ZSD7_RMS_ADMIN_R WHERE MANDT = '300' AND ZRMS_YM = TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'YYYYMM') AND ZLEVEL = '2' AND ZREGION = #{session_zregion} AND ZDEPT_ID = #{session_zdept_id})), ' ') AS RANK1
+							</when>
+							<when test="session_zauth_grp == 'NP'">
+						  		,NVL(TO_CHAR((SELECT ZADMIN_RANK FROM ZSD7_RMS_ADMIN_R WHERE MANDT = '300' AND ZRMS_YM = TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'YYYYMM') AND ZLEVEL = '3' AND ZREGION = #{session_zregion} AND ZDEPT_ID = #{session_zdept_id} AND ZDEPT_BRCH_ID = #{session_zdept_brch_id})), ' ') AS RANK1
+							</when>
+						</choose>
+					</when>
+					<otherwise>
+						,' ' AS RANK1
+					</otherwise>
+				</choose>
+			    <choose>
+				  	<when test='session_zregion_gb != "A"'>
+				  		<choose>
+						  	<when test="session_zauth_grp == 'NX' or session_zauth_grp == 'NI'">
+						  		,NVL(TO_CHAR((SELECT ZUP_RANK FROM ZSD7_RMS_ADMIN_R WHERE MANDT = '300' AND ZRMS_YM = TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'YYYYMM') AND ZLEVEL = '1' AND ZREGION = #{session_zregion})), ' ') AS RANK2
+							</when>
+							<when test="session_zauth_grp == 'NC'">
+						  		,NVL(TO_CHAR((SELECT ZUP_RANK FROM ZSD7_RMS_ADMIN_R WHERE MANDT = '300' AND ZRMS_YM = TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'YYYYMM') AND ZLEVEL = '2' AND ZREGION = #{session_zregion} AND ZDEPT_ID = #{session_zdept_id})), ' ') AS RANK2
+							</when>
+							<when test="session_zauth_grp == 'NP'">
+						  		,NVL(TO_CHAR((SELECT ZUP_RANK FROM ZSD7_RMS_ADMIN_R WHERE MANDT = '300' AND ZRMS_YM = TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'YYYYMM') AND ZLEVEL = '3' AND ZREGION = #{session_zregion} AND ZDEPT_ID = #{session_zdept_id} AND ZDEPT_BRCH_ID = #{session_zdept_brch_id})), ' ') AS RANK2
+							</when>
+						</choose>
+					</when>
+					<otherwise>
+						,' ' AS RANK2
+					</otherwise>
+				</choose>
+		FROM(
+		    SELECT SUM(ZITEM1_T) AS ZITEM1_T, SUM(ZITEM1_S) AS ZITEM1_S
+		          , SUM(ZITEM2_T) AS ZITEM2_T, SUM(ZITEM2_S) AS ZITEM2_S
+		          , SUM(ZITEM3_T) AS ZITEM3_T, SUM(ZITEM3_S) AS ZITEM3_S
+		          , SUM(ZITEM4_T) AS ZITEM4_T, SUM(ZITEM4_S) AS ZITEM4_S
+		          , SUM(ZITEM5_T) AS ZITEM5_T, SUM(ZITEM5_S) AS ZITEM5_S
+		          , SUM(ZITEM6_T) AS ZITEM6_T, SUM(ZITEM6_S) AS ZITEM6_S
+		          , SUM(ZITEM7_T) AS ZITEM7_T, SUM(ZITEM7_S) AS ZITEM7_S
+		    FROM ZSD7_RMS_TOTAL
+		    WHERE MANDT = '300'
+		    AND ZRMS_YM = TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'YYYYMM')
+		    <if test='session_zregion_gb == "A"'>
+				AND ZLEVEL = '1'
+			</if>
+		    <if test='session_zregion_gb != "A"'>
+				<if test="session_zauth_grp == 'NX' or session_zauth_grp == 'NI'">
+					AND ZREGION = #{session_zregion}
+					AND ZLEVEL = '1'
+				</if>
+				<if test="session_zauth_grp == 'NC'">
+					AND ZREGION = #{session_zregion}
+					AND ZDEPT_ID = #{session_zdept_id}
+					AND ZLEVEL = '2'
+				</if>
+				<if test="session_zauth_grp == 'NP'">
+					AND ZREGION = #{session_zregion}
+					AND ZDEPT_ID = #{session_zdept_id}
+					AND ZDEPT_BRCH_ID = #{session_zdept_brch_id}
+					AND ZLEVEL = '3'
+				</if>
+				<if test="session_zauth_grp != 'NX' and session_zauth_grp != 'NI' and session_zauth_grp != 'NC' and session_zauth_grp != 'NP'">
+					AND 1 = 2
+				</if>
+			</if>
+		)
+
+	</select>
+	
+</mapper>

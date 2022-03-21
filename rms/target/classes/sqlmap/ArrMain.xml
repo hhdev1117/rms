@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.daekyo.rms.arr.dao.ArrMainDAO"> 
+
+	<resultMap type="arrMainVO" id="arrMain1">
+		<id column="totalcnt" 			property="totalcnt" />
+		<id column="rnum" 				property="rnum" />
+		<id column="zrms_ym" 			property="zrms_ym" />
+		<id column="zemp_nm" 			property="zemp_nm" />
+		<id column="zemp_id" 			property="zemp_id" />
+		<id column="zregion" 			property="zregion" />
+		<id column="zregion_nm" 		property="zregion_nm" />
+		<id column="zdept_id"			property="zdept_id" />
+		<id column="zdept_nm" 			property="zdept_nm" />
+		<id column="zdept_brch_id" 		property="zdept_brch_id" />
+		<id column="zlc_nm" 			property="zlc_nm" />
+		<id column="kunnr" 				property="kunnr" />
+		<id column="zmbr_nm"			property="zmbr_nm" />
+		<id column="zgrade_cde" 		property="zgrade_cde" />
+		<id column="matnr" 				property="matnr" />
+		<id column="matnr_nm" 			property="matnr_nm" />
+		<id column="zrcpt_amt" 			property="zrcpt_amt" />
+		<id column="zlastfee_ym" 		property="zlastfee_ym" />
+		
+	</resultMap>
+	
+	<select id="getArrPayment" parameterType="HashMap" resultMap="arrMain1" > 
+		WITH RMS_ARRE_D AS
+		(
+				SELECT ZRMS_YM
+				     , (SELECT ZNM FROM ZSD7_LOGIN WHERE MANDT = '300' AND KUNNR = A.ZEMP_ID AND ROWNUM = 1) AS ZEMP_NM
+				     , ZEMP_ID
+				     , ZREGION
+				     , (SELECT NAME1 FROM ZFIT010 WHERE MANDT = '300' AND BRANCH = A.ZREGION) AS ZREGION_NM
+				     , ZDEPT_ID
+				     , (SELECT NAME1 FROM ZFIT010 WHERE MANDT = '300' AND BRANCH = A.ZDEPT_ID) AS ZDEPT_NM
+				     , ZDEPT_BRCH_ID
+				     , ZLC_NM
+				     , KUNNR
+				     , ZMBR_NM
+				     , ZGRADE_CDE
+				     , MATNR
+				     , (SELECT MAKTX FROM MAKT WHERE MANDT = '300' AND MATNR = A.MATNR) AS MATNR_NM
+				     , ZRCPT_AMT
+				     , ZLASTFEE_YM
+				FROM ZSD7_RMS_ARRE_D A
+				WHERE MANDT = '300'
+				<if test='session_zregion_gb == "A"'>
+					<if test='active_bcg_id == "N"'>
+						AND (ZREGION LIKE 'T3%' OR ZREGION = 'T802' OR ZREGION = 'T410') -- T410 : 성장사업본부
+					</if>
+					<if test='active_bcg_id == "C"'>
+						AND ZREGION = 'T880'
+					</if>
+					<if test='active_bcg_id == "S"'>
+						AND ZREGION = 'T885'
+					</if>
+				</if>
+				<if test='session_zregion_gb != "A"'>
+					<if test='session_zregion_gb == "N"'>
+						AND (ZREGION LIKE 'T3%' OR ZREGION = 'T802')
+					</if>
+					<if test='session_zregion_gb == "C"'>
+						AND ZREGION = 'T880'
+					</if>
+					<if test='session_zregion_gb == "S"'>
+						AND ZREGION = 'T885'
+					</if>
+				</if>
+				
+				<if test='zreq_ym_a != null and zreq_ym_a != ""'>
+					<if test='zreq_ym_b != null and zreq_ym_b != ""'>
+						AND ZRMS_YM BETWEEN #{zreq_ym_b} AND #{zreq_ym_a}
+					</if>
+				</if>
+				<if test="session_zauth_grp == 'N1' or session_zauth_grp == 'N0' or session_zauth_grp == 'NS' or session_zauth_grp == 'NA' or session_zauth_grp == 'NI'">
+					<choose>
+						<when test="session_zauth_grp == 'NI'">
+							<if test='session_zregion_gb != "A"'>
+								AND ZREGION = #{zregion}
+								<if test='zdept_id != null and zdept_id != ""'>
+									AND ZDEPT_ID = #{zdept_id}
+								</if>
+								<if test='zdept_brch_id != null and zdept_brch_id != ""'>
+									AND ZDEPT_BRCH_ID = #{zdept_brch_id}
+								</if>
+								<if test='zemp_id != null and zemp_id != ""'>
+									AND ZEMP_ID = #{zemp_id}
+								</if>
+							</if>
+						</when>
+						<otherwise>
+							<if test='zregion != null and zregion != ""'>
+								AND ZREGION = #{zregion}
+							</if>
+							<if test='zdept_id != null and zdept_id != ""'>
+								AND ZDEPT_ID = #{zdept_id}
+							</if>
+							<if test='zdept_brch_id != null and zdept_brch_id != ""'>
+								AND ZDEPT_BRCH_ID = #{zdept_brch_id}
+							</if>
+							<if test='zemp_id != null and zemp_id != ""'>
+								AND ZEMP_ID = #{zemp_id}
+							</if>
+						</otherwise>
+					</choose>
+				</if>
+				<if test="session_zauth_grp == 'NC' or session_zauth_grp == 'NP'">
+					AND ZREGION = #{session_zregion}
+					AND ZDEPT_ID = #{session_zdept_id}
+					<if test='zdept_brch_id != null and zdept_brch_id != ""'>
+						AND ZDEPT_BRCH_ID = #{zdept_brch_id}
+					</if>
+					<if test='zemp_id != null and zemp_id != ""'>
+						AND ZEMP_ID = #{zemp_id}
+					</if>
+				</if>
+				<if test="session_zauth_grp == 'NX' ">
+					AND ZREGION = #{session_zregion}
+					<if test='zdept_id != null and zdept_id != ""'>
+						AND ZDEPT_ID = #{zdept_id}
+					</if>
+					<if test='zdept_brch_id != null and zdept_brch_id != ""'>
+						AND ZDEPT_BRCH_ID = #{zdept_brch_id}
+					</if>
+					<if test='zemp_id != null and zemp_id != ""'>
+						AND ZEMP_ID = #{zemp_id}
+					</if>
+				</if>
+				ORDER BY ZRMS_YM DESC, ZREGION, ZDEPT_ID, ZDEPT_BRCH_ID, ZEMP_ID
+		)	
+        SELECT *
+        FROM(
+            SELECT ROWNUM AS RNUM, A.*, B.TOTALCNT
+            FROM RMS_ARRE_D A
+                , (SELECT COUNT(1) AS TOTALCNT
+                   FROM RMS_ARRE_D) B
+        )
+        WHERE 1 = 1
+		AND RNUM <![CDATA[ <= ]]> (#{page}*1) * 20
+		AND RNUM <![CDATA[ > ]]> ((#{page}*1) - 1) * 20
+		
+		
+	</select>
+	
+</mapper>

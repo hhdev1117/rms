@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.daekyo.rms.com.dao.ComDataDAO"> 
+
+	<resultMap type="codeVO" id="codeMap">
+		<id column="code" 		property="code" />
+		<id column="name" 		property="name" />
+	</resultMap>
+	
+	<select id="getZregion" parameterType="HashMap" resultMap="codeMap" > 
+		SELECT
+		  	CODE
+		  , NAME
+		FROM (
+		  	SELECT DATA.ZREGION AS CODE
+		  	      , SUBSTR(DATA.ZREGION_NM, 0, 10) AS NAME
+		  	FROM (
+		      	SELECT 1 ZLEVEL
+		         	 , ZREGION
+		          	 , (SELECT NAME1 FROM ZFIT010 B WHERE B.MANDT = '300' AND B.BRANCH = A.ZREGION) ZREGION_NM
+			    FROM ZFIT010 A
+			    WHERE MANDT = '300'
+			    <if test='zauth_grp == "NC"  or zauth_grp == "NE" or zauth_grp == "NP" or zauth_grp == "NT"'>
+			    	AND NOT (VKGRP = 'N99')
+			    </if>
+			    AND SD_ORG = 'Y'
+			    AND ZREGION != 'Z200'
+			    AND ZREGION != GHORG
+			    AND SUBSTR(BRANCH, 0, 1) != 'M'
+			    GROUP BY ZREGION
+			 ) DATA, ZSD_COCDT SORT
+		WHERE SORT.ZGRCODE = 'N022'
+		AND SORT.ZCODE = DATA.ZREGION
+		<if test='zauth_grp == "NC"  or zauth_grp == "NE" or zauth_grp == "NP" or zauth_grp == "NT"'>
+			AND DATA.ZREGION_NM NOT LIKE '%폐쇄%'
+		</if>
+		<if test='zauth_grp == "NI"  or zauth_grp == "NX" or zauth_grp == "NP" or zauth_grp == "NC" or zauth_grp == "NE"  or zauth_grp == "NT"'>
+			AND DATA.ZREGION_NM NOT LIKE '%성장사업본부%'
+			AND DATA.ZREGION_NM NOT LIKE '%디지털사업%'
+		</if>
+		<if test='active_bcg_id == "N"'>
+			AND (ZCODE LIKE 'T3%' OR ZCODE = 'T802' OR ZCODE = 'T410')
+		</if>
+		<if test='active_bcg_id == "C"'>
+			AND ZCODE = 'T880'
+		</if>
+		<if test='active_bcg_id == "S"'>
+			AND ZCODE = 'T885'
+		</if>
+		<if test='session_zregion_gb != "A"'>
+			AND  ZREGION = #{zregion}
+		</if>
+		ORDER BY SORT.ZORDER
+		)
+	</select>
+	
+	<select id="getVkbur" parameterType="HashMap" resultMap="codeMap" > 
+		SELECT
+		      BRANCH AS CODE,				
+		      SUBSTR(NAME1, 0, 10) AS NAME				
+		FROM  ZFIT010
+		WHERE MANDT	= '300'
+		AND ZREGION = #{zregion}
+		<if test='zauth_grp == "NC"  or zauth_grp == "NE" or zauth_grp == "NP" or zauth_grp == "NT"'>
+		AND  BRANCH = #{zdept_id}
+		</if>
+		AND SD_ORG  = 'Y'
+		AND BRANCH != ZREGION
+		<if test='zauth_grp == "NC"  or zauth_grp == "NE" or zauth_grp == "NP" or zauth_grp == "NT"'>
+			AND NAME1 NOT LIKE '%폐쇄%'			-- 폐쇄 지점 제외
+		</if>
+		AND NAME1 NOT LIKE '%화상센터%'
+		AND NAME1 NOT LIKE '%폰중국어지점%'
+		ORDER BY BRANCH, ZPCODE
+	</select>
+	
+	<select id="getVkgrp" parameterType="HashMap" resultMap="codeMap" > 
+		SELECT
+		DISTINCT
+			 T2.VKGRP CODE,
+			 (SELECT MAX(ZLC_NM) KEEP(DENSE_RANK FIRST ORDER BY ZRCD_YM DESC) FROM ZSD7_LC_ORG_MT WHERE MANDT = '300' AND ZDEPT_ID = T2.VKBUR AND ZDEPT_BRCH_ID = T2.VKGRP) AS NAME
+		FROM
+			 KNA1 T1,
+			 KNVV T2
+		WHERE   T1.MANDT = '300'
+		AND T1.MANDT = T2.MANDT
+		AND T1.KUNNR = T2.KUNNR
+		AND T2.LOEVM != 'X'
+		AND T1.KTOKD = 'Z200'
+		AND T2.VKBUR = #{vkbur}
+		AND T2.VKGRP NOT IN (' ','000')
+	</select>
+	
+	<select id="getZemp" parameterType="HashMap" resultMap="codeMap" > 
+		SELECT T1.KUNNR CODE
+		     , SUBSTR(T1.NAME1, 0, 10) NAME
+		FROM KNA1 T1
+		   , KNVV T2
+		WHERE T1.MANDT = '300'
+		AND T1.MANDT = T2.MANDT
+		AND T1.KUNNR = T2.KUNNR
+		AND T1.KTOKD = 'Z200'
+		AND T2.LOEVM != 'X'
+		AND T2.VTWEG = (SELECT VTWEG
+		                FROM ZFIT010
+		                WHERE MANDT ='300'
+		                AND BRANCH = #{zregion})
+		AND T2.VKBUR = #{vkbur}
+		AND T2.VKGRP = #{vkgrp}
+		<if test='zauth_grp == "NT"'>
+		AND  T1.KUNNR = #{zemp_id}
+		</if>
+		ORDER BY T1.NAME1
+	</select>
+	
+	<select id="selectCodeList" parameterType="java.lang.String" resultMap="codeMap">
+		  SELECT zcode AS code, zcodenm AS name
+		    FROM zsd_cocdt
+		   WHERE mandt = '300' AND zgrcode = #{zgrcode} AND zuse_yn = 'Y'
+		ORDER BY zorder
+	</select>
+	
+</mapper>

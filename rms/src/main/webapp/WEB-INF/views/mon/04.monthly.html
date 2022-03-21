@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+	<title>주요Risk예방관리 시스템</title>
+	<link rel="stylesheet" type="text/css" href="css/font.css">
+	<link rel="stylesheet" type="text/css" href="css/default.css">
+	<link rel="stylesheet" type="text/css" href="css/layout.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<!-- <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script> -->
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  	<script src="dist/jquery-simple-tree-table.js"></script>
+	<script src="js/jquery-ui.min.js"></script>
+
+	<script>
+	    function wrapWindowByMask() {
+	        var maskHeight = $(document).height(); 
+	        var maskWidth = $(window).width();
+
+	        console.log( "document 사이즈:"+ $(document).width() + "*" + $(document).height()); 
+	        console.log( "window 사이즈:"+ $(window).width() + "*" + $(window).height());        
+	        $('#mask').css({
+	            'width' : maskWidth,
+	            'height' : maskHeight
+	        });
+	        $('#mask').fadeTo("slow", 0.5);
+	    }
+
+	    function popupOpen() {
+	        $('.layerpop').css("position", "absolute");
+	        $('.layerpop').css("top",(($(window).height() - $('.layerpop').outerHeight()) / 2) + $(window).scrollTop());
+	        $('.layerpop').css("left",(($(window).width() - $('.layerpop').outerWidth()) / 2) + $(window).scrollLeft());
+	        $('.layerpop').draggable();
+	        $('#layerbox').show();
+	    }
+
+	    function popupClose() {
+	        $('#layerbox').hide();
+	        $('#mask').hide();
+	    }
+
+	    function goDetail() {
+	        popupOpen(); 
+	        wrapWindowByMask();
+	    }
+	</script>
+
+</head>
+<body>
+	<div class="wrap">
+		<!-- header -->
+		<div class="header">
+			<div class="top-left">
+				<a href=""><img src="images/logo.png" class="logo" alt="로고"></a>
+				<h1>주요Risk예방관리</h1>
+				<div class="dropdown">
+				    <button class="dropbtn">
+				    	<span>눈높이 </span>
+				    	<i class="fa fa-caret-down"></i>
+				    </button>
+				    <div class="dropdown-content">
+				    	<a href="#">차이홍</a>
+				    	<a href="#">솔루니</a>
+				    </div>
+				</div>
+			</div>
+			<div class="top-right">
+				<a href="">경인BCG &gt; 광명HL</a>
+				<a href="" class="my"><img src="images/icon_my.png" alt="이름"><span class="name">김드림</span></a>
+				<a href="" class="logout"><img src="images/icon_logout.png" alt="로그아웃"></a>
+			</div>
+		</div>
+		<!-- // header -->
+		<!-- contents -->
+		<div class="content-bg">
+			<!-- left-menu -->
+			<div class="left-bg">
+				<ul class="main-menu">
+					<li>
+						<a href="" class="menu">
+							<img src="images/menu_1.png" alt="">
+							<div class="menu-tt">모니터링 SUM</div>
+						</a>
+					</li>
+					<li>
+						<a href="" class="menu active">
+							<img src="images/menu_2.png" alt="">
+							<div class="menu-tt">월별 모니터링</div>
+						</a>
+					</li>
+					<li>
+						<a href="" class="menu">
+							<img src="images/menu_3.png" alt="">
+							<div class="menu-tt">모니터링 세부</div>
+						</a>
+						<div class="submenu">
+							<ul>
+								<li><a href="">개인정보 대리인증</a></li>
+								<li><a href="">카드대납</a></li>
+								<li><a href="">이체제외 후 학습</a></li>
+								<li><a href="">2개월 체납</a></li>
+								<li><a href="">직접결제 중복발송</a></li>
+								<li><a href="">써밋제품 미학습 Risk</a></li>
+								<li><a href="">교사 간 전입 후 퇴회</a></li>
+							</ul>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<!-- // left-menu -->
+			<!-- container -->
+			<div class="container">
+				<h2>월별 모니터링</h2>
+				<!-- filter area -->
+				<div class="filter-area">
+					<div class="left">
+						<div class="filtering">
+							<div class="custom-input date">
+								<input type="text" id="date" placeholder="2020/11">
+								<a href="" class="icon_calender"><img src="images/icon_calender.png" alt=""></a>
+							</div>
+							<div class="filterBox calender-box">
+								<div class="year">
+									<span><img src="images/icon_arrow_left.png" alt=""></span>
+									<span class="txt-year">2021년</span>
+									<span><img src="images/icon_arrow_right.png" alt=""></span>
+								</div>
+								<div>
+									<input type="radio" id="option1" class="month" value="option1" checked="checked">
+									<label for="option1">1월</label>
+									<input type="radio" id="option2" class="month" value="option2">
+									<label for="option2">2월</label>
+									<input type="radio" id="option3" class="month" value="option3">
+									<label for="option3">2월</label>
+									<input type="radio" id="option4" class="month" value="option4">
+									<label for="option4">4월</label>
+									<input type="radio" id="option5" class="month" value="option5">
+									<label for="option5">5월</label>
+									<input type="radio" id="option6" class="month" value="option6">
+									<label for="option6">6월</label>
+									<input type="radio" id="option7" class="month" value="option7">
+									<label for="option7">7월</label>
+									<input type="radio" id="option8" class="month" value="option8">
+									<label for="option8">8월</label>
+									<input type="radio" id="option9" class="month" value="option9">
+									<label for="option9">9월</label>
+									<input type="radio" id="option10" class="month" value="option10">
+									<label for="option10">10월</label>
+									<input type="radio" id="option11" class="month" value="option11">
+									<label for="option11">11월</label>
+									<input type="radio" id="option12" class="month" value="option12">
+									<label for="option12">12월</label>
+								</div>
+							</div>							
+						</div>						
+						<span>~&nbsp;</span>
+						<div class="filtering">
+							<div class="custom-input date">
+								<input type="text" id="date" placeholder="2020/11">
+								<a href="" class="icon_calender"><img src="images/icon_calender.png" alt=""></a>
+							</div>
+							<div class="filterBox calender-box">
+								<div class="year">
+									<span><img src="images/icon_arrow_left.png" alt=""></span>
+									<span class="txt-year">2021년</span>
+									<span><img src="images/icon_arrow_right.png" alt=""></span>
+								</div>
+								<div>
+									<input type="radio" id="option1" class="month" value="option1" checked="checked">
+									<label for="option1">1월</label>
+									<input type="radio" id="option2" class="month" value="option2">
+									<label for="option2">2월</label>
+									<input type="radio" id="option3" class="month" value="option3">
+									<label for="option3">2월</label>
+									<input type="radio" id="option4" class="month" value="option4">
+									<label for="option4">4월</label>
+									<input type="radio" id="option5" class="month" value="option5">
+									<label for="option5">5월</label>
+									<input type="radio" id="option6" class="month" value="option6">
+									<label for="option6">6월</label>
+									<input type="radio" id="option7" class="month" value="option7">
+									<label for="option7">7월</label>
+									<input type="radio" id="option8" class="month" value="option8">
+									<label for="option8">8월</label>
+									<input type="radio" id="option9" class="month" value="option9">
+									<label for="option9">9월</label>
+									<input type="radio" id="option10" class="month" value="option10">
+									<label for="option10">10월</label>
+									<input type="radio" id="option11" class="month" value="option11">
+									<label for="option11">11월</label>
+									<input type="radio" id="option12" class="month" value="option12">
+									<label for="option12">12월</label>
+								</div>
+							</div>							
+						</div>
+					    <!-- 조직선택 input -->
+					    <div class="custom-input org">
+							<div class="filtering org-select">
+								<div class="custom-input selt-Chk">
+									<input type="text" id="" placeholder="조직선택">
+									<a href="" class="icon_filter"><img src="images/icon_filter.png" alt=""></a>
+								</div>
+								<div class="filterBox">
+									<div>
+										<div id="zregion" class="slct-branch" onclick="groupClick(this)">
+											<ul>
+												<li>조직 선택</li>
+											    <li class="has-sub"><a href="#">북서울BCG</a></li>
+											    <li class="has-sub"><a href="#">남서울BCG</a></li>
+											    <li class="has-sub"><a href="#">경인BCG</a></li>
+											    <li class="has-sub"><a href="#">중부BCG</a></li>
+											    <li class="has-sub"><a href="#">서부BCG</a></li>
+											    <li class="has-sub"><a href="#">동부BCG</a></li>
+											    <li class="has-sub"><a href="#">남부BCG</a></li>
+											</ul>									
+										</div>
+										<div id="zdept" class="slct-branch" onclick="groupClick(this)">
+											<ul>
+												<li>사업국 선택</li>
+											    <li class="has-sub"><a href="#">용산HL</a></li>
+											    <li class="has-sub"><a href="#">마포HL</a></li>
+											    <li class="has-sub"><a href="#">은평HL</a></li>
+											    <li class="has-sub"><a href="#">동대문HL</a></li>
+											    <li class="has-sub"><a href="#">최덕규BCL</a></li>
+											    <li class="has-sub"><a href="#">홍기연BCL</a></li>
+											    <li class="has-sub"><a href="#">송영아BCL</a></li>
+											    <li class="has-sub"><a href="#">김가연BCL</a></li>
+											    <li class="has-sub"><a href="#">조신영BCL</a></li>
+											</ul>									
+										</div>									
+										<div id="zdept_brch" class="slct-branch" onclick="groupClick(this)">
+											<ul>
+												<li>팀[센터] 선택</li>
+											    <li class="has-sub"><a href="#">001[갈현]</a></li>
+											    <li class="has-sub"><a href="#">002[별빛드림]</a></li>
+											    <li class="has-sub"><a href="#">003[중산중앙]</a></li>
+											    <li class="has-sub"><a href="#">004[장위]</a></li>
+											</ul>									
+										</div>
+										<div id="zemp" class="slct-branch" onclick="groupClick(this)">
+											<ul>
+												<li>교사 선택</li>
+											    <li class="has-sub"><a href="#">김릇기[32044008]</a></li>
+											    <li class="has-sub"><a href="#">조병월[31039892]</a></li>
+											    <li class="has-sub"><a href="#">한숙란[32053676]</a></li>
+											    <li class="has-sub"><a href="#">허미선[31076740]</a></li>
+											</ul>									
+										</div>										
+									</div>
+									<div>
+										<button class="btnConf">확인</button>
+									</div>
+								</div>				    	
+							</div>
+						    <input type="text" id="organization" class="org-input" placeholder="북서울BCG>최덕규BCL>00[중산중앙]>한이란">
+						</div>
+						<button class="btn-tb-top search">검색</button>
+					</div>
+					<div class="right">
+						<button class="btn-tb-top excel-1" onClick="javascript:goDetail('엑셀다운');">엑셀다운</button>
+						<!-- <button class="btn-tb-top excel-1">엑셀다운</button> -->
+						<button class="btn-tb-top excel-2">전사 엑셀다운</button>
+					</div>
+				</div>
+				<!-- // filter area -->
+				<!-- table -->
+				<div class="tbl">
+					<table id="basic">
+						<colgroup>
+							<col style="width:auto;">
+							<col style="width:11%;">
+							<col style="width:10%;">
+							<col style="width:10%;">
+							<col style="width:10%;">
+							<col style="width:11%;">
+							<col style="width:10%;">
+							<col style="width:10%;">
+							<col style="width:8%;">
+							<col style="width:8%;">
+						</colgroup>
+						<thead>
+							<tr>
+								<th>년-월</th>
+								<th>개인정보 대리인증</th>
+								<th>카드대납</th>
+								<th>이체제외 후 학습</th>
+								<th>2개월 체납</th>
+								<th>직접결제중복발송</th>
+								<th>써밋제품 미학습 Risk</th>
+								<th>교사 간 전입 후 퇴회</th>
+								<th>관리순위</th>
+								<th>개선순위</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr class="bg-blue">
+								<td>상위20%기준</td>
+								<td>5%</td>
+								<td>3%</td>
+								<td>6%</td>
+								<td>12</td>
+								<td>8%</td>
+								<td>12%</td>
+								<td>1%</td>
+								<td>-</td>
+								<td>-</td>
+							</tr>
+							<tr class="bg-grey">
+								<td>평균</td>
+								<td>6%</td>
+								<td>4%</td>
+								<td>7%</td>
+								<td>15</td>
+								<td>9%</td>
+								<td>13%</td>
+								<td>3%</td>
+								<td>-</td>
+								<td>-</td>
+							</tr>
+							<tr>
+								<td>2020-12</td>
+								<td>5%</td>
+								<td>5%</td>
+								<td>6%</td>
+								<td>1</td>
+								<td>5%</td>
+								<td>5%</td>
+								<td>4%</td>
+								<td class="blue">3</td>
+								<td class="blue">5</td>
+							</tr>
+							<tr>
+								<td>2020-11</td>
+								<td>5%</td>
+								<td>5%</td>
+								<td>6%</td>
+								<td>1</td>
+								<td>5%</td>
+								<td>5%</td>
+								<td>4%</td>
+								<td class="blue">3</td>
+								<td class="blue">5</td>
+							</tr>
+							<tr>
+								<td>2020-10</td>
+								<td>5%</td>
+								<td>5%</td>
+								<td>6%</td>
+								<td>1</td>
+								<td>5%</td>
+								<td>5%</td>
+								<td>4%</td>
+								<td class="blue">3</td>
+								<td class="blue">5</td>
+							</tr>
+							<tr>
+								<td>2020-09</td>
+								<td>5%</td>
+								<td>5%</td>
+								<td>6%</td>
+								<td>1</td>
+								<td>5%</td>
+								<td>5%</td>
+								<td>4%</td>
+								<td class="blue">3</td>
+								<td class="blue">5</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<!-- // table -->
+			</div>
+			<!-- // container -->
+		</div>
+		<!-- // contents -->
+	</div>
+
+	<!-- layer popup -->
+    <div id="mask"></div>   
+    <div id="layerbox" class="layerpop">
+    	 <!-- popup 엑셀다운 문서 암호화 -->
+        <div class="layerpop_area">
+        	<div>
+		        <div class="title">엑셀다운 문서 암호화</div>
+		        <div class="layerpop_close">&#10799;</div>
+        	</div>
+	        <div class="popup-content">
+	        	<div class="exl-pw">
+	        		<h3>이 파일의 내용 암호화</h3>
+	        		<label for="exl-pw">암호 :</label>
+					<input type="password" id="exl-pw" name="exl-pw">
+	        	</div>
+	        	<div class="pop-stxt">
+	        		<span>* 주의 :</span><span class="txt">암호를 잊거나 잃어버리면 복구할 수 없습니다.<br/>
+						암호 및 해당 암호를 사용하는 문서이름을 목록으로 <br/>
+						만들어 안전한 위치에 보관하는 것이 좋습니다.<br/>
+						암호는 대/소문자를 구분합니다.</span> 
+	        	</div>
+	        	<div class="pop-btn">
+	        		<a href="javascript:popupClose();" id="layerbox_close" class="btn-left">취소</a>
+	        		<a href="" class="btn-right">확인</a>
+	        	</div>
+	        </div>
+        </div>
+    </div>
+	
+	<!-- tree-table -->
+	<script>
+		$('#basic').simpleTreeTable({
+		  expander: $('#expander'),
+		  collapser: $('#collapser'),
+		  store: 'session',
+		  storeKey: 'simple-tree-table-basic'
+		});
+		$('#open1').on('click', function() {
+		  $('#basic').data('simple-tree-table').openByID("1");
+		});
+		$('#close1').on('click', function() {
+		  $('#basic').data('simple-tree-table').closeByID("1");
+		});
+	</script>
+</body>
+</html>

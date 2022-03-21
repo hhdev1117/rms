@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="deployextension" default="static_copy" basedir=".">
+	
+	<property file="./build.properties" />
+	<property name="apps.name" value="rms"/>
+	
+	
+	<path id="classpath.lib">
+       <fileset dir="${classpath.lib}" includes="*.jar"/>
+	   <fileset dir="${classpath.server.lib}" includes="*.jar"/>
+     </path>
+	
+	
+	<!-- 기존 빌드 폴더 삭제 -->
+	<target name="delete_folder">
+		<delete verbose="yes"  > 
+			<fileset dir="${build.classes.dir}"  > 
+				<include name="**/*.*" />
+				<exclude name="**/*.class" />
+			</fileset>
+		</delete>
+	</target>
+	
+	<!--컴파일 타겟-->
+    <target name="compile" depends="delete_folder">
+        <javac srcdir= "${src.dir}" 
+        destdir="${build.classes.dir}"
+        includes="**/*.java"
+        excludes="**/*.class"
+        debug="on"
+        includeantruntime="false"	
+        >    	
+        	
+        <classpath refid="classpath.lib" />
+        </javac>
+
+    </target>
+	
+	
+	<!--Mybatis XML 파일 복사-->
+ 	<target name="ibatis_copy" depends="compile">
+        
+        <copy todir="${build.classes.dir}/sqlmap" overwrite="true">
+        	<fileset dir="${mybatis.dir}"> 
+        		<include name="**/*.xml" />
+        		<exclude name="**/*.bak" />
+        	</fileset>
+        </copy>
+ 	</target>
+	
+	<!-- Log4j, Mybatis Config 파일 복사-->
+ 	<target name="ibatis_config_copy" depends="ibatis_copy">
+        
+        <copy todir="${build.classes.dir}" overwrite="true">
+        	<fileset dir="${src.dir}/main/resources"> 
+        		<include name="**/*.*" />
+        		<exclude name="**/*.bak" />
+        	</fileset>
+        </copy>
+ 	</target>
+	
+	
+	<!--view 폴더 파일 복사-->
+ 	<target name="view_copy" depends="ibatis_config_copy">        
+        <copy todir="${build.view.dir}" overwrite="true">
+        	<fileset dir="${view.dir}"> 
+        		<include name="**/*.*" />
+        		<exclude name="**/*.bak" />
+        	</fileset>
+        </copy>
+ 	</target>
+	
+	
+	<!--static 폴더 파일 복사-->
+ 	<target name="static_copy" depends="view_copy">        
+        <copy todir="${build.static.dir}" overwrite="true">
+        	<fileset dir="${static.dir}"> 
+        		<include name="**/*.*" />
+        		<exclude name="**/*.bak" />
+        	</fileset>
+        </copy>
+ 	</target>
+
+		
+	<!--template 폴더 파일 복사-->
+ 	<target name="template_copy" depends="static_copy">        
+        <copy todir="${build.template.dir}" overwrite="true">
+        	<fileset dir="${template.dir}"> 
+        		<include name="**/*.*" />
+        		<exclude name="**/*.bak" />
+        	</fileset>
+        </copy>
+ 	</target>
+	
+</project>

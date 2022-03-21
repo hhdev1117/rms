@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="DEBUG">
+
+	<Properties>
+		<Property name="logNm">rms_log</Property>
+  		<Property name="layoutPattern">%style{%d{yyyy/MM/dd HH:mm:ss,SSS}}{cyan} %highlight{[%-5p]}{FATAL=bg_red, ERROR=red,
+            INFO=green, DEBUG=blue}  [%C] %style{[%t]}{yellow}- %m%n -</Property>
+	</Properties>
+
+	<Appenders>
+  		<Console name="console" target="SYSTEM_OUT">
+   			<PatternLayout pattern="${layoutPattern}" />
+  		</Console>
+ 	</Appenders>
+
+	<Loggers>
+		<Root level="info" additivity="false" >
+			<AppenderRef ref="console" />
+	  	</Root>
+		
+	    <logger name="org.springframework.core" level="info" additivity="false">
+			<AppenderRef ref="console" />
+		</logger>
+
+		<logger name="org.springframework.beans" level="info" additivity="false">
+			<AppenderRef ref="console" />
+		</logger>
+	
+		<logger name="org.springframework.context" level="info" additivity="false">
+			<AppenderRef ref="console" />
+		</logger>
+	
+		<logger name="org.springframework.web" level="info" additivity="false">
+			<AppenderRef ref="console" />
+		</logger>
+		
+		<logger name="org.springframework" level="info" additivity="false">
+			<AppenderRef ref="console" />
+		</logger>
+	
+		<!-- SQL Logger -->
+		<logger name="jdbc.sqltiming" level="info" additivity="false">
+			<AppenderRef ref="console" />
+		</logger>
+	
+		<logger name="jdbc.sqlonly" level="info" additivity="false">
+			<AppenderRef ref="console" />
+		</logger>
+	
+		<logger name="jdbc.audit" level="OFF" additivity="false">
+			<AppenderRef ref="console" />
+		</logger>
+	
+		<logger name="jdbc.resultset" level="OFF" additivity="false">
+			<AppenderRef ref="console" />
+		</logger>
+		
+		<logger name="jdbc.connection" level="info" additivity="false">
+			<AppenderRef ref="console" />
+		</logger>
+	
+		<logger name="jdbc.resultsettable" level="OFF" additivity="false">
+			<AppenderRef ref="console" />
+		</logger>
+		
+		<logger name="jdbc.sqltiming" level="info" additivity="false">
+			<AppenderRef ref="console"/> 
+		</logger>
+	 </Loggers>
+
+</Configuration>

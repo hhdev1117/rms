@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+ 
+ <!-- 맵핑될 DAO 인터페이스의 Full name 을 줍니다. -->
+<mapper namespace="com.daekyo.rms.com.dao.ComLoginDAO"> 
+
+
+	<!-- VO : mybatis-confg.xml 에 Alias 되어 있습니다. -->
+	
+	<!-- 로그인 사용자 확인 -->	
+	<resultMap type="loginVO" id="checkLoginInfoMap">
+		<id column="gubun" 			property="gubun" />
+		<id column="zlogin_id" 		property="zlogin_id" />
+		<id column="zcenter_id" 	property="zcenter_id" />
+		<id column="zpasswd"		property="zpasswd" />
+		<id column="use_yn" 		property="use_yn" />
+	</resultMap>
+	
+	<select id="checkLoginInfo" parameterType="HashMap" resultMap="checkLoginInfoMap" > 
+		SELECT 
+		    ZLOGIN_ID, '' AS ZCENTER_ID, ZPASSWD, 
+		    (CASE WHEN ZLOCK = '1' THEN 'Y' ELSE 'N' END) AS USE_YN
+		FROM ZSD7_LOGIN
+		WHERE MANDT = '300'
+		--AND ZAUTH_GRP IN ('NP', 'NC', 'NX', 'NI', 'NS', 'NA', 'N1', 'N0')
+		AND ZLOGIN_ID = #{zloginId}
+	</select>
+	
+	<!-- 접근권한 확인 -->	
+	<select id="checkAuthInfo" parameterType="HashMap" resultMap="checkLoginInfoMap" > 
+		SELECT 
+		    ZLOGIN_ID, '' AS ZCENTER_ID, ZPASSWD, 
+		    (CASE WHEN ZLOCK = '1' THEN 'Y' ELSE 'N' END) AS USE_YN
+		FROM ZSD7_LOGIN
+		WHERE MANDT = '300'
+		AND ZAUTH_GRP IN (SELECT ZAUTH_GB FROM ZSD7_RMS_MENU WHERE MANDT = '300' AND ZUSE_YN = 'Y')
+		AND ZLOGIN_ID = #{zloginId}
+	</select>
+	
+	<!-- 4번  관리자 로그인 정보-->
+	<resultMap type="loginVO" id="getLoginInfoMap4">
+		<id column="zlogin_id" 		property="zlogin_id" />
+		<id column="zemp_id" 		property="zemp_id" />
+		<id column="zemp_nm" 		property="zemp_nm" />
+		<id column="zregion"		property="zregion" />
+		<id column="zregion_nm"		property="zregion_nm" />
+		<id column="zdept_id"		property="zdept_id" />
+		<id column="zdept_nm"		property="zdept_nm" />
+		<id column="zdept_brch_id" 	property="zdept_brch_id" />
+		<id column="zcenter_gb" 	property="zcenter_gb" />		
+		<id column="zcenter_nm" 	property="zcenter_nm" />
+		<id column="zcenter_id" 	property="zcenter_id" />
+		<id column="vtweg" 			property="vtweg" />
+		<id column="zauth_grp"		property="zauth_grp" />
+		<id column="kvgr2"			property="kvgr2" />
+	</resultMap>
+	
+	<select id="getLoginInfo" parameterType="HashMap" resultMap="getLoginInfoMap4"> 
+		-- [getLoginInfo4]
+		SELECT
+		    ZLOGIN_ID, ZEMP_ID, ZEMP_NM, ZREGION, ZREGION_NM, ZDEPT_ID, ZDEPT_NM, ZDEPT_BRCH_ID, 
+		    ZCENTER_GB, 
+		    (CASE 
+		        WHEN ZCENTER_GB = 'LC' 
+		            THEN (SELECT ZLC_NM FROM ZSD7_LCMST WHERE MANDT = '300' AND ZLC_ID = B.ZCENTER_ID)
+		        WHEN ZCENTER_GB = 'YC' 
+		            THEN (SELECT ZYC_NM FROM ZSD8_YCMST WHERE MANDT = '300' AND ZYC_ID = B.ZCENTER_ID)
+		        WHEN ZCENTER_GB = 'SOLC' 
+		            THEN (SELECT ZSOLC_NM FROM ZSD7_SOLCMST WHERE MANDT = '300' AND ZSOLC_ID = B.ZCENTER_ID)
+		     END) AS ZCENTER_NM,            
+		    ZCENTER_ID, VTWEG, ZAUTH_GRP,
+		    (SELECT KVGR2 FROM KNVV WHERE MANDT = '300' AND KUNNR = B.ZEMP_ID AND VTWEG = B.VTWEG AND ROWNUM = 1) AS KVGR2
+		        
+		FROM (
+		    SELECT
+		        ZLOGIN_ID, ZEMP_ID, ZEMP_NM, ZREGION, ZREGION_NM, ZDEPT_ID, ZDEPT_NM, ZDEPT_BRCH_ID, 
+		        (CASE 
+		            WHEN ZLC_ID is not null THEN 'LC'
+		            WHEN ZYC_ID is not null THEN 'YC'
+		            WHEN ZSOLC_ID is not null THEN 'SOLC'
+		         END) AS ZCENTER_GB,
+		        (CASE 
+		            WHEN ZLC_ID is not null THEN ZLC_ID
+		            WHEN ZYC_ID is not null THEN ZYC_ID
+		            WHEN ZSOLC_ID is not null THEN ZSOLC_ID
+		         END) AS ZCENTER_ID,
+		        
+		        VTWEG, ZAUTH_GRP
+		    FROM (
+		        SELECT
+		        	 ZLOGIN_ID
+		        	,KUNNR AS ZEMP_ID
+		            ,ZNM AS ZEMP_NM
+		            ,(SELECT ZREGION FROM ZFIT010 WHERE MANDT = '300' AND BRANCH = A.VKBUR) AS ZREGION
+		            ,(SELECT NAME1 FROM ZFIT010 WHERE MANDT = '300' AND BRANCH = (SELECT ZREGION FROM ZFIT010 WHERE MANDT = '300' AND BRANCH = A.VKBUR)) AS ZREGION_NM
+		            ,VKBUR AS ZDEPT_ID
+		            ,(SELECT NAME1 FROM ZFIT010 WHERE MANDT = '300' AND BRANCH = A.VKBUR) AS ZDEPT_NM
+		            ,VKGRP AS ZDEPT_BRCH_ID
+		            ,(CASE 
+		                -- 조직도 처리가 되었으면 현재월, 안되었으면 -1월로 LC 센터 추출
+		                WHEN (SELECT ZSRT_YM FROM ZSD7_RCD_CLOSE WHERE MANDT = '300' AND ZDEPT_ID = A.VKBUR) = TO_CHAR(SYSDATE, 'YYYYMM')
+		                 THEN (SELECT ZLC_ID FROM ZSD7_LC_ORG_MT WHERE MANDT = '300' AND ZRCD_YM = TO_CHAR(SYSDATE, 'YYYYMM') AND ZDEPT_ID = A.VKBUR AND ZDEPT_BRCH_ID = A.VKGRP AND ROWNUM = 1)
+		                ELSE (SELECT ZLC_ID FROM ZSD7_LC_ORG_MT WHERE MANDT = '300' AND ZRCD_YM = TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'YYYYMM') AND ZDEPT_ID = A.VKBUR AND ZDEPT_BRCH_ID = A.VKGRP AND ROWNUM = 1)  
+		             END) AS ZLC_ID
+		            ,(SELECT ZYC_ID FROM ZSD8_YC_TEACHER WHERE MANDT = '300' AND ZDEPT_ID = A.VKBUR AND ZEMP_ID = A.KUNNR) AS ZYC_ID
+		            ,(SELECT ZSOLC_ID FROM ZSD7_SOLC_EMP WHERE MANDT = '300' AND ZDEPT_ID = A.VKBUR AND ZEMP_ID = A.KUNNR) AS ZSOLC_ID
+		            ,VTWEG
+		            ,ZAUTH_GRP		            
+		        FROM ZSD7_LOGIN A
+		        WHERE MANDT = '300'
+		        AND ZLOGIN_ID = #{zlogin_id}
+		    )
+		) B
+	</select>
+	
+	
+	
+	<!-- 로그인 시간 가능여부 -->
+	<select id="getLoginTime" parameterType="java.lang.String" resultType="java.lang.String"> 
+	  -- [getLoginTime]
+	  SELECT CASE WHEN A.ZBTIME <![CDATA[< ]]> TO_CHAR(SYSDATE, 'HH24MI') AND A.ZETIME <![CDATA[ >= ]]> TO_CHAR(SYSDATE, 'HH24MI') THEN 'Y' -- 접속 가능시간이면 Y
+		         WHEN A.ZBTIME='0000' AND A.ZETIME='0000'  THEN 'N1'   -- 0000은 주말차단을 위한 값
+		         WHEN A.ZBTIME=' '    AND A.ZETIME=' '     THEN 'Y'        -- 빈값은 현재시간 상관없이 로그인가능
+	         ELSE 'N2' END AS TIME_GB     -- 그외는 로그인 불가(접속가능시간아님)	     
+	    FROM
+	     (
+	       SELECT   T1.ZLOGIN_ID
+	       		, T1.ZBTIME   --시작시간
+		        , T1.ZETIME   --종료시간
+	        FROM     ZSD7_LOGIN T1
+	        WHERE T1.MANDT = '300'
+	        AND T1.ZLOGIN_ID = #{zlogin_id}
+	      )A
+	</select>
+	
+	
+	<!-- 링크 키값으로 로그인 아이디 추출 -->
+	<select id="getLinkLoginid" parameterType="java.lang.String" resultType="java.lang.String"> 
+	  -- [getLinkLoginid]
+	  SELECT ZLOGIN_ID FROM ZSD7_LOGIN_LINK
+	  WHERE MANDT = '300'
+	    AND ZLINK_KEY = #{zlink_key}
+	</select>
+	
+	
+	<!-- 링크 키값 삭제 처리 -->
+	<delete id="delLinkKey" parameterType="java.lang.String">
+	  DELETE FROM ZSD7_LOGIN_LINK
+	  WHERE MANDT     = '300'
+	    AND ZLINK_KEY = #{zlink_key}
+	</delete>
+	
+</mapper>
+
+
+
